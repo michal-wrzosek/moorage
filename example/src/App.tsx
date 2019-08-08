@@ -106,12 +106,14 @@ const itemsRatios = items.map(i => i.width / i.height);
 
 class App extends Component {
   render() {
-    console.log('items', items);
-    console.log('itemsRatios', itemsRatios);
+    const windowWidth = window.innerWidth;
+    const nrOfColumns = windowWidth < 600 ? 2 : windowWidth < 900 ? 3 : 4;
+    const gutter = 0.1 / nrOfColumns;
+
     return (
       <div>
         <GlobalStyles />
-        <Moorage gutter={0.02} itemComponent={Item} items={items} itemsRatios={itemsRatios} nrOfColumns={4} />
+        <Moorage gutter={gutter} itemComponent={Item} items={items} itemsRatios={itemsRatios} nrOfColumns={nrOfColumns} />
       </div>
     );
   }

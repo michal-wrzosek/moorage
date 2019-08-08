@@ -1,22 +1,30 @@
-# react-component-lib
+# moorage
 
-This is a boilerplate repository for creating npm packages with React components written in TypeScript and using styled-components.
+### React HOC for generating masonry-like grid layout that would work with server side rendering.
 
-Medium article explaining step by step how to use this repo to publish your own library to NPM:
-https://medium.com/@xfor/developing-publishing-react-component-library-to-npm-styled-components-typescript-cc8274305f5a
+<img src="/demo.png" width="300px" />
 
-## Installation:
+###[Live demo](https://github.com/michal-wrzosek/moorage)
 
-To install all dependencies run `npm run install-all`.
+I was building a website for my wife and she asked me to create for her a grid of images that looks like Pinterest website. This is of course not that simple, especially when you want to serve your website with SSR and you don't want any flickering on loading of the page.
 
-## Developing your library:
+I made some shortcuts to make this idea more doable. First, you need to know what's the ratio (width / height) of each of your grid tiles in advance. If your tiles are just pictures it basically mean that you need to keep in your DB width and height of every image.
 
-To start developing your library, run `npm run dev`. It will build your library and run example create-react-app where you can test your components. Each time you make changes to your library or example app, app will be reloaded to reflect your changes.
+Secondly, you should inspect incoming UserAgent on your server to figure out roughly with what kind of device you're dealing with (phone, tablet or desktop) using library like [mobile-detect](https://github.com/hgoebl/mobile-detect.js) and then serve the layout with a fixed nr of columns for your grid.
 
-## Styled-components:
+Obvoisly making such grid with SSR is hard because you can't be fully sure what will be the exact size of your user's screen so you can't position your tiles to exact xy coordinates. What you can do though is to shape your grid in ratios and percentages of the outer container. That's what I did here.
 
-Developing library with components built with styled-components is challenging because you have to keep only one instance of styled-components. If you would just symlink your library (`file:../` or `npm link`) to example app that is also using styled-components you'll get a console warning about multiple instances of styled-components (even though styled-components are peer dependency) and your styles will be possibly broken. To be able to conveniently develop styled components I am injecting bundled files directly into example app's /src folder and importing it in App.tsx along with type declaration.
+There is this cool trick in CSS with `padding-bottom: x%` aka [Aspect Ratio Boxes](https://css-tricks.com/aspect-ratio-boxes/) that let's you create elements that will always keep the ratio no matter what width of the element is gonna be. It's like making your `<div />` behave like `<img />`.
 
-## Typescript
+Using such ratio divs inside ratio divs I created a math hell component that will render a nice layout for a given tiles.
 
-This boilerplate lets you develop your libraries in Typescript and you can simultaneously test it in Typescript example create-react-app.
+Please take a look and use it if you want. If you have some ideas for improvement let me know or just create a PR.
+
+---
+
+Name of this package comes from Polish word [murarz](https://translate.google.pl/#view=home&op=translate&sl=pl&tl=en&text=murarz) (mason/brickmaker).
+
+---
+
+This repository was built using `react-component-lib` biolerplate:
+https://github.com/michal-wrzosek/react-component-lib
