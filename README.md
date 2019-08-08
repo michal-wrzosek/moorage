@@ -14,7 +14,7 @@ Secondly, you should inspect incoming UserAgent on your server to figure out rou
 
 Obvoisly making such grid with SSR is hard because you can't be fully sure what will be the exact size of your user's screen so you can't position your tiles to exact xy coordinates. What you can do though is to shape your grid in ratios and percentages of the outer container. That's what I did here.
 
-There is this cool trick in CSS with `padding-bottom: x%` aka [Aspect Ratio Boxes](https://css-tricks.com/aspect-ratio-boxes/) that let's you create elements that will always keep the ratio no matter what width of the element is gonna be. It's like making your `<div />` behave like `<img />`.
+There is this cool trick in CSS with `padding-bottom: x%` aka [Aspect Ratio Boxes](https://css-tricks.com/aspect-ratio-boxes/) that lets you create elements that will always keep the ratio no matter what width of the element is gonna be. It's like making your `<div />` behave like `<img />`.
 
 Using such ratio divs inside ratio divs I created a math hell component that will render a nice layout for a given tiles.
 
