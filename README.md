@@ -2,9 +2,9 @@
 
 ### React HOC for generating masonry-like grid layout that would work with server side rendering.
 
-<img src="/demo.png" width="300px" />
+<a href="https://michal-wrzosek.github.io/moorage"><img src="/demo.png" width="300px" /></a>
 
-###[Live demo](https://github.com/michal-wrzosek/moorage)
+[Live demo](https://michal-wrzosek.github.io/moorage)
 
 I was building a website for my wife and she asked me to create for her a grid of images that looks like Pinterest website. This is of course not that simple, especially when you want to serve your website with SSR and you don't want any flickering on loading of the page.
 
