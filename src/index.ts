@@ -1,3 +1,3 @@
-import { TestComponent } from "./components/TestComponent/TestComponent";
+import Moorage from "./components/Moorage/Moorage";
 
-export { TestComponent };
+export { Moorage };
