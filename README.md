@@ -22,6 +22,16 @@ Please take a look and use it if you want. If you have some ideas for improvemen
 
 ---
 
+### To install run:
+
+```
+npm i moorage
+```
+
+Example of how to use this component package [here](example/src/App.tsx).
+
+---
+
 Name of this package comes from Polish word [murarz](https://translate.google.pl/#view=home&op=translate&sl=pl&tl=en&text=murarz) (mason/brickmaker).
 
 ---
