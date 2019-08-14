@@ -1,5 +1,7 @@
 # moorage
 
+![npm](https://img.shields.io/npm/v/moorage) [![Build Status](https://travis-ci.com/michal-wrzosek/moorage.svg?branch=master)](https://travis-ci.com/michal-wrzosek/moorage)
+
 ### React HOC for generating masonry-like grid layout that would work with server side rendering.
 
 <a href="https://michal-wrzosek.github.io/moorage"><img src="/demo.png" width="300px" /></a>
@@ -29,6 +31,8 @@ npm i moorage
 ```
 
 Example of how to use this component package [here](example/src/App.tsx).
+
+This package is shipped with Typescript types already so you don't have to install any other separate @types/... packages.
 
 ---
 
