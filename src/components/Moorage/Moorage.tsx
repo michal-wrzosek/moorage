@@ -1,5 +1,6 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+
+import getReciprocal from './getReciprocal';
 
 export interface MoorageProps {
   items: any[];
@@ -9,73 +10,105 @@ export interface MoorageProps {
   nrOfColumns: number;
 }
 
-type ItemCoordinates = {
+interface ItemCoordinates {
   wrapperRatio: number;
   itemRatio: number;
   left: number;
   columnWidth: number;
   orderIndexInColumn: number;
-};
+}
 
-const FixedRatioWrapper = styled.div<{ ratio: number }>`
-  width: 100%;
-  padding-bottom: calc(100% / ${({ ratio }) => ratio});
-  position: relative;
+interface FixedRatioWrapperStylesProps {
+  ratio: number;
+}
 
-  & > div,
-  & > img {
-    position: absolute;
-  }
-`;
+interface ItemWidthWrapperStylesProps {
+  width: number;
+  left: number;
+}
 
-const Item = styled(FixedRatioWrapper)`
-  display: block;
-  position: relative;
-  bottom: 0;
-  pointer-events: auto;
-`;
+interface MainWrapperStylesProps {
+  gutter: number;
+}
 
-const ItemWrapper = styled(FixedRatioWrapper)`
-  position: relative;
-  top: 0;
-`;
+interface GetMoorageStylesProps {
+  itemsRatios: number[];
+  gutter: number;
+  nrOfColumns: number;
+}
 
-const ItemWidthWrapper = styled.div<{ width: number; left: number }>`
-  position: relative;
-  width: ${({ width }) => width * 100}%;
-  left: ${({ left }) => left * 100}%;
-`;
+interface MoorageStyles {
+  mainWrapperStyles: React.CSSProperties;
+  heightWrapperStyles: React.CSSProperties;
+  itemsStyles: {
+    itemWidthWrapperStyles: React.CSSProperties;
+    itemWrapperStyles: React.CSSProperties;
+    itemStyles: React.CSSProperties;
+    itemInsideStyles: React.CSSProperties;
+  }[];
+}
 
-const HeightWrapper = styled(FixedRatioWrapper)``;
+export enum TestIds {
+  MainWrapper = 'MainWrapper',
+  HeightWrapper = 'HeightWrapper',
+  ItemWidthWrapper = 'ItemWidthWrapper',
+  ItemWrapper = 'ItemWrapper',
+  Item = 'Item',
+  ItemInside = 'ItemInside',
+}
 
-const MainWrapper = styled.div<{ gutter: number }>`
-  margin: 0 ${({ gutter }) => (gutter / 2) * 100}%;
-  pointer-events: none;
-`;
+const fixedRatioWrapperStyles = ({ ratio }: FixedRatioWrapperStylesProps): React.CSSProperties => ({
+  width: '100%',
+  paddingBottom: `calc(100% / ${ratio})`,
+  position: 'relative',
+});
 
-// is swapping numerator with denominator: 2/3 => 3/2
-const getReciprocal = (number: number) => (number === 0 ? 0 : number / (number * number));
+const itemInsideStyles = (): React.CSSProperties => ({
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+});
 
-const Moorage: React.FC<MoorageProps> = ({
-  items,
-  itemComponent: ItemComponent,
-  itemsRatios,
-  gutter,
-  nrOfColumns,
-}) => {
+const itemStyles = ({ ratio }: FixedRatioWrapperStylesProps): React.CSSProperties => ({
+  ...fixedRatioWrapperStyles({ ratio }),
+  display: 'block',
+  bottom: 0,
+  pointerEvents: 'auto',
+  position: 'absolute',
+});
+
+const itemWrapperStyles = ({ ratio }: FixedRatioWrapperStylesProps): React.CSSProperties => ({
+  ...fixedRatioWrapperStyles({ ratio }),
+  top: 0,
+});
+
+const itemWidthWrapperStyles = ({ width, left }: ItemWidthWrapperStylesProps): React.CSSProperties => ({
+  position: 'absolute',
+  width: `${width * 100}%`,
+  left: `${left * 100}%`,
+});
+
+const heightWrapperStyles = fixedRatioWrapperStyles;
+
+const mainWrapperStyles = ({ gutter }: MainWrapperStylesProps): React.CSSProperties => ({
+  margin: `0 ${(gutter / 2) * 100}%`,
+  pointerEvents: 'none',
+});
+
+export const getMoorageStyles = ({ itemsRatios, gutter, nrOfColumns }: GetMoorageStylesProps): MoorageStyles => {
   const columnsRatios: number[] = Array.from(Array(nrOfColumns)).map(() => 0);
   const columnsNrOfItems: number[] = Array.from(Array(nrOfColumns)).map(() => 0);
   const columnSideGutter = gutter / (1 - gutter);
   const columnVerticalGutter = gutter / ((1 - gutter) / nrOfColumns);
   const inversedVerticalGutterRatio = columnVerticalGutter / 1;
 
-  const itemsCoordinates: ItemCoordinates[] = itemsRatios.map((itemRatio) => {
+  const itemsCoordinates: ItemCoordinates[] = itemsRatios.map(itemRatio => {
     const [shortestColumnIndex, shortestColumnRatio] = columnsRatios.reduce(
       ([shortestColumnIndex, shortestColumnRatio], columnRatio, columnIndex) =>
         getReciprocal(columnRatio) < getReciprocal(shortestColumnRatio)
           ? [columnIndex, columnRatio]
           : [shortestColumnIndex, shortestColumnRatio],
-      [0, columnsRatios[0]]
+      [0, columnsRatios[0]],
     );
 
     const left = (1 / nrOfColumns) * shortestColumnIndex + columnSideGutter / 2;
@@ -101,30 +134,54 @@ const Moorage: React.FC<MoorageProps> = ({
   const tallestColumnRatio = columnsRatios.reduce(
     (tallestColumnRatio, columnRatio) =>
       getReciprocal(columnRatio) > getReciprocal(tallestColumnRatio) ? columnRatio : tallestColumnRatio,
-    columnsRatios[0]
+    columnsRatios[0],
   );
 
   const tallestColumnRatioWithBottomGutter = getReciprocal(
-    getReciprocal(tallestColumnRatio) + inversedVerticalGutterRatio
+    getReciprocal(tallestColumnRatio) + inversedVerticalGutterRatio,
   );
 
   const columnWidthPercentage = (1 - nrOfColumns * gutter) / nrOfColumns;
   const heightWrapperRatio = 1 / (columnWidthPercentage / tallestColumnRatioWithBottomGutter);
 
+  return {
+    mainWrapperStyles: mainWrapperStyles({ gutter }),
+    heightWrapperStyles: heightWrapperStyles({ ratio: heightWrapperRatio }),
+    itemsStyles: itemsCoordinates.map(itemCoordinates => ({
+      itemWidthWrapperStyles: itemWidthWrapperStyles({
+        width: itemCoordinates.columnWidth,
+        left: itemCoordinates.left,
+      }),
+      itemWrapperStyles: itemWrapperStyles({ ratio: itemCoordinates.wrapperRatio }),
+      itemStyles: itemStyles({ ratio: itemCoordinates.itemRatio }),
+      itemInsideStyles: itemInsideStyles(),
+    })),
+  };
+};
+
+const Moorage: React.FC<MoorageProps> = ({ items, itemComponent: ItemComponent, itemsRatios, gutter, nrOfColumns }) => {
+  const { mainWrapperStyles, heightWrapperStyles, itemsStyles } = getMoorageStyles({
+    itemsRatios,
+    gutter,
+    nrOfColumns,
+  });
+
   return (
-    <MainWrapper gutter={gutter}>
-      <HeightWrapper ratio={heightWrapperRatio}>
-        {itemsCoordinates.map((itemCoordinates, index) => (
-          <ItemWidthWrapper key={index} width={itemCoordinates.columnWidth} left={itemCoordinates.left}>
-            <ItemWrapper ratio={itemCoordinates.wrapperRatio}>
-              <Item ratio={itemCoordinates.itemRatio}>
-                <ItemComponent item={items[index]}></ItemComponent>
-              </Item>
-            </ItemWrapper>
-          </ItemWidthWrapper>
+    <div data-testid={TestIds.MainWrapper} style={mainWrapperStyles}>
+      <div data-testid={TestIds.HeightWrapper} style={heightWrapperStyles}>
+        {itemsStyles.map((itemStyles, index) => (
+          <div data-testid={TestIds.ItemWidthWrapper} key={index} style={itemStyles.itemWidthWrapperStyles}>
+            <div data-testid={TestIds.ItemWrapper} style={itemStyles.itemWrapperStyles}>
+              <div data-testid={TestIds.Item} style={itemStyles.itemStyles}>
+                <div data-testid={TestIds.ItemInside} style={itemStyles.itemInsideStyles}>
+                  <ItemComponent item={items[index]} />
+                </div>
+              </div>
+            </div>
+          </div>
         ))}
-      </HeightWrapper>
-    </MainWrapper>
+      </div>
+    </div>
   );
 };
 
